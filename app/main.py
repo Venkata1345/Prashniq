@@ -73,13 +73,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
         from psycopg_pool import AsyncConnectionPool
 
-        db_engine = create_async_engine(settings.asyncpg_database_url)
+        # pool_pre_ping: serverless Postgres (Neon) suspends when idle and
+        # kills pooled connections; ping-on-checkout replaces dead ones.
+        db_engine = create_async_engine(settings.asyncpg_database_url, pool_pre_ping=True)
         # The graph checkpointer speaks psycopg, not asyncpg. The pool opens in
         # lifespan; the saver is built lazily (it needs a running event loop).
+        # `check` re-validates pooled connections on checkout, and max_idle
+        # retires connections before Neon's ~5-minute suspend can kill them.
         checkpointer_pool = AsyncConnectionPool(
             settings.database_url.replace("+asyncpg", ""),
             open=False,
             kwargs={"autocommit": True},
+            check=AsyncConnectionPool.check_connection,
+            max_idle=180,
         )
         checkpointer_factory = lambda: AsyncPostgresSaver(checkpointer_pool)  # noqa: E731
         interview_repository = PostgresInterviewRepository(db_engine)

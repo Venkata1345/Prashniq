@@ -85,8 +85,10 @@ class PgVectorStore:
         table_name: str = DEFAULT_TABLE_NAME,
         echo: bool = False,
     ) -> "PgVectorStore":
+        # pool_pre_ping: serverless Postgres (Neon) suspends when idle and
+        # kills pooled connections; ping-on-checkout replaces dead ones.
         return cls(
-            engine=create_async_engine(url, echo=echo),
+            engine=create_async_engine(url, echo=echo, pool_pre_ping=True),
             dimensions=dimensions,
             table_name=table_name,
         )
