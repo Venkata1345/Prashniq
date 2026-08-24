@@ -1,0 +1,47 @@
+[project]
+name = "ai-interview-simulator"
+version = "0.1.0"
+description = "Adaptive AI/ML technical interview simulator"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    # LLM + embeddings via LangChain (providers selected by config).
+    "langchain>=1.0",
+    "langchain-openai>=1.0",
+    "langchain-anthropic>=1.0",
+    "langchain-groq>=1.0",
+    "langchain-text-splitters>=1.0",
+    # Interview loop orchestration with Postgres checkpointing.
+    "langgraph>=1.0",
+    "langgraph-checkpoint-postgres>=3.0",
+    "psycopg[binary]>=3.2",
+    # Corpus ingestion + resume/JD PDF upload.
+    "pypdf>=5.0",
+    "python-multipart>=0.0.9",
+    # Vector + relational storage.
+    "sqlalchemy[asyncio]>=2.0",
+    "asyncpg>=0.29",
+    "pgvector>=0.3",
+    "alembic>=1.13",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "httpx"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "integration: needs a live Postgres with pgvector (set TEST_DATABASE_URL)",
+]
+filterwarnings = ["error::DeprecationWarning:app.*"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
