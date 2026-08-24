@@ -1,0 +1,21 @@
+# Postgres with pgvector, for the vector store.
+# Start with:  docker compose up -d db
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: interview
+      POSTGRES_PASSWORD: interview
+      POSTGRES_DB: interview
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U interview"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
