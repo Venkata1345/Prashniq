@@ -72,6 +72,20 @@ JD requirements, (c) grades an answer into a validated Pydantic schema,
   real text-embedding-3-small vectors) + `rag_chunks_test`. `interviews`
   table has leftover test rows (cand-42, cand-lg, browser-demo…) — harmless.
 
+## Production (live since 2026-08-24)
+
+- **https://prashniq.onrender.com** — Render free tier (Docker, Ohio), deploys
+  automatically on push to main. GitHub: Venkata1345/Prashniq.
+- DB: Neon free tier (Ohio), 285 MB with all 16,289 corpus chunks migrated
+  via pg_dump (no re-embedding). Connection string in Render env
+  (`DATABASE_URL`) and locally in `.env` as `NEON_DATABASE_URL` (inert).
+- LLM: Groq free tier (`openai/gpt-oss-120b`); embeddings OpenAI (pennies).
+  Secrets live only in the Render dashboard.
+- Free-tier quirks handled in code: Render spin-down (~50 s cold start,
+  nothing to do), Neon scale-to-zero (pool_pre_ping + psycopg pool check —
+  do not remove), SEED_KNOWLEDGE_BASE=false in prod (data was migrated).
+- Verified 2026-08-24: full 5-question interview end-to-end on prod.
+
 ## Run / verify commands
 
 ```bash
