@@ -153,11 +153,14 @@ export default function SetupView({ modes, onStarted, toast, health }) {
           Adaptive · RAG-grounded · Feedback at the end
         </div>
         <h1 className="bg-gradient-to-r from-white via-indigo-100 to-indigo-300 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent sm:text-5xl">
-          AI/ML Interview Simulator
+          Prashniq
         </h1>
+        <p className="mx-auto mt-3 text-sm tracking-wide text-indigo-300/80">
+          prashna (प्रश्न) · Sanskrit for “question”
+        </p>
         <p className="mx-auto mt-4 max-w-xl text-base text-slate-400">
-          A realistic technical interviewer that adapts to every answer. Feedback
-          comes at the end — just like a real interview.
+          An adaptive AI interviewer for AI/ML roles. It probes every answer and
+          holds the feedback until the end — just like a real interview.
         </p>
       </header>
 

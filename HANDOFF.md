@@ -1,4 +1,4 @@
-# HANDOFF — AI/ML Interview Simulator
+# HANDOFF — Prashniq (AI/ML interview platform)
 
 Session handoff, 2026-08-24. Read this first, then `README.md` (user-facing
 docs) and `ai_ml_interview_simulator_coding_agent_prompt.md` (the original

@@ -36,7 +36,7 @@ class TestStaticServing:
     def test_the_page_and_its_assets_are_served(self, client: TestClient) -> None:
         page = client.get("/ui/")
         assert page.status_code == 200
-        assert "Interview Simulator" in page.text
+        assert "Prashniq" in page.text
         # Every same-origin script/stylesheet the page references must be served
         # (asset names are content-hashed by the React build, so discover them).
         import re

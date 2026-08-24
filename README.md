@@ -1,4 +1,6 @@
-# AI/ML Technical Interview Simulator
+# Prashniq — the adaptive AI interviewer for AI/ML roles
+
+*From **prashna** (प्रश्न), Sanskrit for "question."*
 
 An adaptive AI interview engine built on **LangGraph** (checkpointed interview
 loop), **LangChain** (provider-agnostic models, embeddings and document
