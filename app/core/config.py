@@ -5,6 +5,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -45,11 +46,57 @@ class Settings(BaseSettings):
     knowledge_min_score: float = 0.35
     claim_min_score: float = 0.25
 
+    @field_validator("database_url")
+    @classmethod
+    def _coerce_asyncpg_scheme(cls, url: str | None) -> str | None:
+        """Accept hosted-Postgres URLs as pasted (Neon, Supabase, Heroku-style).
+
+        SQLAlchemy picks its driver from the scheme; a bare postgresql:// would
+        select the sync psycopg2 driver it can't use here.
+        """
+        if not url:
+            return url
+        if url.startswith("postgres://"):
+            url = "postgresql://" + url[len("postgres://") :]
+        if url.startswith("postgresql://"):
+            url = "postgresql+asyncpg://" + url[len("postgresql://") :]
+        return url
+
     @property
     def resolved_vector_store(self) -> Literal["pgvector", "memory"]:
         if self.vector_store == "auto":
             return "pgvector" if self.database_url else "memory"
         return self.vector_store
+
+    @property
+    def asyncpg_database_url(self) -> str | None:
+        """The database URL with libpq-style params translated for asyncpg.
+
+        Hosted Postgres (Neon, Supabase) hands out URLs with `sslmode=require`
+        and `channel_binding=require` — libpq/psycopg parameters that asyncpg
+        rejects. asyncpg wants `ssl=require` and has no channel_binding knob.
+        The psycopg checkpointer pool keeps the original URL untouched.
+        """
+        if not self.database_url:
+            return None
+        return normalize_asyncpg_url(self.database_url)
+
+
+def normalize_asyncpg_url(url: str) -> str:
+    from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
+    parts = urlsplit(url)
+    if not parts.query:
+        return url
+    query = []
+    for key, value in parse_qsl(parts.query):
+        if key == "sslmode":
+            query.append(("ssl", value))
+        elif key == "channel_binding":
+            continue
+        else:
+            query.append((key, value))
+    return urlunsplit(parts._replace(query=urlencode(query)))
 
 
 @lru_cache

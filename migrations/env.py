@@ -43,7 +43,9 @@ def _run_migrations(connection) -> None:
 
 
 async def run_migrations_online() -> None:
-    engine = create_async_engine(config.get_main_option("sqlalchemy.url"))
+    from app.core.config import normalize_asyncpg_url
+
+    engine = create_async_engine(normalize_asyncpg_url(config.get_main_option("sqlalchemy.url")))
     try:
         async with engine.connect() as connection:
             await connection.run_sync(_run_migrations)

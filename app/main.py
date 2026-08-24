@@ -73,7 +73,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
         from psycopg_pool import AsyncConnectionPool
 
-        db_engine = create_async_engine(settings.database_url)
+        db_engine = create_async_engine(settings.asyncpg_database_url)
         # The graph checkpointer speaks psycopg, not asyncpg. The pool opens in
         # lifespan; the saver is built lazily (it needs a running event loop).
         checkpointer_pool = AsyncConnectionPool(

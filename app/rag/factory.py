@@ -61,7 +61,7 @@ def build_vector_store(settings: Settings) -> VectorStore:
             raise ValueError("vector_store=pgvector requires database_url")
         logger.info("vector_store=pgvector")
         return PgVectorStore.from_url(
-            settings.database_url, dimensions=settings.embedding_dimensions
+            settings.asyncpg_database_url, dimensions=settings.embedding_dimensions
         )
 
     logger.warning(
