@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interview Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🎯</text></svg>" />
+</head>
+<body>
+  <main id="app">
+
+    <!-- ============ SETUP ============ -->
+    <section id="view-setup" class="view">
+      <header class="hero">
+        <h1>AI/ML Interview Simulator</h1>
+        <p class="sub">A realistic technical interviewer that adapts to every answer.
+           Feedback comes at the end, like a real interview.</p>
+      </header>
+
+      <div class="card">
+        <h2>1 · Interview type</h2>
+        <div id="mode-grid" class="mode-grid" role="radiogroup" aria-label="Interview type"></div>
+      </div>
+
+      <div class="card">
+        <h2>2 · Who is interviewing? <span class="muted">(optional)</span></h2>
+        <input id="candidate-id" type="text" placeholder="candidate id, e.g. abhishek — enables the skill profile"
+               autocomplete="off" spellcheck="false" />
+        <p class="hint">With a candidate id, results accumulate into a skill profile and
+           future interviews steer toward your weak areas.</p>
+      </div>
+
+      <div class="card">
+        <h2>3 · Target a role <span class="muted">(optional)</span></h2>
+        <p class="hint">Paste a resume and/or job description and the interview is planned
+           around the role's must-haves and your own claims.</p>
+        <details id="context-details">
+          <summary>Add resume / job description</summary>
+          <label for="resume-text">Resume (plain text)</label>
+          <textarea id="resume-text" rows="6" placeholder="Built a RAG system using FAISS and FastAPI serving 200 rps..."></textarea>
+          <label for="jd-text">Job description</label>
+          <textarea id="jd-text" rows="5" placeholder="Must have: production RAG experience, retrieval evaluation..."></textarea>
+        </details>
+      </div>
+
+      <div class="actions">
+        <button id="start-btn" class="primary">Start interview</button>
+      </div>
+    </section>
+
+    <!-- ============ INTERVIEW ============ -->
+    <section id="view-interview" class="view hidden">
+      <header class="interview-header">
+        <div>
+          <span id="iv-mode" class="badge"></span>
+          <span id="iv-topic" class="topic"></span>
+        </div>
+        <div class="header-right">
+          <span id="iv-difficulty" class="difficulty" title="difficulty"></span>
+          <span id="iv-progress" class="progress"></span>
+        </div>
+      </header>
+
+      <div id="transcript" class="transcript" aria-live="polite"></div>
+
+      <form id="answer-form" class="answer-box">
+        <textarea id="answer-input" rows="4" placeholder="Type your answer… (Ctrl+Enter to submit)"
+                  required></textarea>
+        <div class="answer-actions">
+          <button type="button" id="end-btn" class="ghost">End interview</button>
+          <button type="submit" id="submit-btn" class="primary">Submit answer</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ REPORT ============ -->
+    <section id="view-report" class="view hidden">
+      <header class="hero small">
+        <h1>Interview report</h1>
+        <p class="sub" id="report-meta"></p>
+      </header>
+
+      <div class="card score-card">
+        <div class="overall">
+          <div id="overall-score" class="overall-number">–</div>
+          <div class="overall-label">overall / 10</div>
+        </div>
+        <div id="dimension-bars" class="dimensions"></div>
+      </div>
+
+      <div class="report-grid">
+        <div class="card"><h2>Strengths</h2><ul id="report-strengths" class="chips good"></ul></div>
+        <div class="card"><h2>Weaknesses</h2><ul id="report-weaknesses" class="chips bad"></ul></div>
+        <div class="card"><h2>Missed concepts</h2><ul id="report-missed" class="chips"></ul></div>
+        <div class="card"><h2>Role skills not reached</h2><ul id="report-unaddressed" class="chips"></ul></div>
+      </div>
+
+      <div class="card">
+        <h2>Question-by-question evidence</h2>
+        <ol id="report-evidence" class="evidence"></ol>
+      </div>
+
+      <div id="profile-card" class="card hidden">
+        <h2>Skill profile <span class="muted">across all interviews</span></h2>
+        <div id="profile-topics" class="dimensions"></div>
+        <p class="hint" id="profile-focus"></p>
+      </div>
+
+      <div class="actions">
+        <button id="again-btn" class="primary">New interview</button>
+      </div>
+    </section>
+
+    <div id="toast" class="toast hidden" role="alert"></div>
+    <div id="spinner" class="spinner hidden" aria-label="working"><div></div></div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
